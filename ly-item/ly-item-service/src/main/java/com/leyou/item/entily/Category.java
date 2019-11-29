@@ -1,4 +1,4 @@
-package com.leyou.entily;
+package com.leyou.item.entily;
 
 import lombok.Data;
 import tk.mybatis.mapper.annotation.KeySql;
