@@ -17,3 +17,6 @@ eureka:
     ip-address: 127.0.0.1
     lease-renewal-interval-in-seconds: 5 #修改心跳为5s
     lease-expiration-duration-in-seconds: 15 #修改过期时间
+logging:
+  level:
+    com.leyou: debug
