@@ -5,7 +5,8 @@
     </v-card-title>
     <v-divider/>
     <v-card-text class="px-3">
-      <v-form v-model="valid" ref="myBrandForm">
+      <!--      ref表示把当前组件v-form标记给this，BrandForm-->
+      <v-form v-model="valid" ref="heima86">
         <v-container grid-list-md>
           <v-layout wrap>
             <v-flex class="md6">
@@ -16,11 +17,11 @@
             </v-flex>
             <v-flex>
               <v-cascader
-                url="/item/category/of/parent"
-                multiple
-                required
-                v-model="brand.categories"
-                label="商品分类"/>
+                      url="/item/category/of/parent"
+                      multiple
+                      required
+                      v-model="brand.categories"
+                      label="商品分类"/>
             </v-flex>
           </v-layout>
           <v-layout row>
@@ -79,7 +80,7 @@
     methods: {
       submit() {
         // 表单校验
-        if (this.$refs.myBrandForm.validate()) {
+        if (this.$refs.heima86.validate()) {
           // 定义一个请求参数对象，通过解构表达式来获取brand中的属性
           const {categories, letter, ...params} = this.brand;
           // 数据库中只要保存分类的id即可，因此我们对categories的值进行处理,只保留id，并转为字符串
@@ -97,16 +98,18 @@
             this.$emit("close");
             this.$message.success("保存成功！");
           })
-            .catch(() => {
-              this.$message.error("保存失败！");
-            });
+                  .catch(() => {
+                    this.$message.error("保存失败！");
+                  });
         }
       },
       clear() {
         // 重置表单
-        this.$refs.myBrandForm.reset();
+        //this.$refs表示其中所有的标记对象
+        this.$refs.heima86.reset();
         // 需要手动清空商品分类
-        this.categories = [];
+        this.brand.categories = [];
+        this.brand.image = "";
       },
       close(){
         this.$emit("close");
