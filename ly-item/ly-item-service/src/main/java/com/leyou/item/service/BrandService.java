@@ -12,6 +12,7 @@ import com.leyou.item.mapper.BrandMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -24,10 +25,10 @@ public class BrandService {
     @Autowired
     private BrandMapper brandMapper;
 
-    public PageResult<BrandDTO> pageQuery(Integer page,Integer rows,String sortBy,Boolean desc){
+    public PageResult<BrandDTO> pageQuery(Integer page,Integer rows,String sortBy,Boolean desc,String key){
         PageHelper.startPage(page,rows);
 
-        //动态sql拼接工具
+        //动态sql拼接工具的生成器
         Example example = new Example(Brand.class);
 
 
@@ -37,6 +38,15 @@ public class BrandService {
             //select * from tb_xx where a = b order by id DESC
             //条件记得加空格
             example.setOrderByClause(sortBy+(desc?" DESC":" ASC"));
+        }
+
+        if (!StringUtils.isBlank(key)){
+            //动态sql拼接工具
+            Example.Criteria criteria = example.createCriteria();
+            //拼接动态sql,
+            //连接方式为and : select * from tb_xx where a = b order by id DESC and ...
+            //比较方式Like : 模糊比较
+            criteria.andLike("name","%"+key+"%");
         }
 
 
@@ -58,5 +68,28 @@ public class BrandService {
          */
         return new PageResult<>(pageInfo.getTotal(),pageInfo.getPages(), BeanHelper.copyWithCollection(brands,BrandDTO.class));
 
+    }
+
+
+    //不只操纵一次数据库,需要添加事务注解
+    @Transactional
+    public void addBrand(BrandDTO brandDTO,List<Long> cids){
+
+        Brand brand = BeanHelper.copyProperties(brandDTO, Brand.class);
+
+
+        //新增品牌
+        int count = this.brandMapper.insertSelective(brand);
+
+        if (1!=count){
+            throw new LyException(ExceptionEnum.BRAND_SAVE_ERROR);
+        }
+
+        //与分类和品牌中间表添加外键
+        count = this.brandMapper.insertCategoryBrand(cids,brand.getId());
+
+        if (count!=cids.size()){
+            throw new LyException(ExceptionEnum.BRAND_CATEGORY_SAVE_ERROR);
+        }
     }
 }

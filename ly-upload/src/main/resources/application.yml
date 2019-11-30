@@ -1,13 +1,14 @@
 server:
-  port: 8081
+  port: 8082
 spring:
   application:
-    name: item-service
-  datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/leyou
-    username: root
-    password: root
+    name: upload-service
+
+      #上传文件大小 默认1m
+#  servlet:
+#    multipart:
+#      max-file-size:
+
 eureka:
   client:
     service-url:
@@ -19,11 +20,6 @@ eureka:
     lease-expiration-duration-in-seconds: 15 #修改过期时间
 
 
-mybatis:
-  mapper-locations: mappers/**/*.xml
-  type-aliases-package: com.leyou.item.entity
-  configuration:
-    map-underscore-to-camel-case: true
 
 
 logging:

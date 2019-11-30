@@ -17,6 +17,15 @@ eureka:
     ip-address: 127.0.0.1
     lease-renewal-interval-in-seconds: 5 #修改心跳为5s
     lease-expiration-duration-in-seconds: 15 #修改过期时间
+
+
+mybatis:
+  mapper-locations: mappers/**/*.xml
+  type-aliases-package: com.leyou.item.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+
 logging:
   level:
     com.leyou: debug
