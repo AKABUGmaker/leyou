@@ -26,12 +26,17 @@
                         <span v-else>无</span>
                     </td>
                     <td class="text-xs-center">{{ props.item.letter }}</td>
+                    <td class="text-xs-center">
+                        <v-btn class="info" @click="editBrand(props.item)">编辑</v-btn>
+                        <v-btn class="warning" @click="deleteBrand(props.item.id)">删除</v-btn>
+                    </td>
                 </template>
             </v-data-table>
         </v-card>
 
         <v-dialog v-model="dialog" width="500" persistent>
-            <brand-form @close="closeWindow"></brand-form>
+<!--        :old-brand="oldBrand"    父子通讯，把父中的isEdit以及oldBrand传递给子 -->
+            <brand-form @close="closeWindow" :is-edit="isEdit" :old-brand="oldBrand"></brand-form>
         </v-dialog>
 
     </div>
@@ -48,6 +53,8 @@
         name: "my-brand",
         data() {
             return {
+                oldBrand:{},
+                isEdit:false,
                 dialog:false,
                 key:"",
                 totalBrands: 0, // 总条数
@@ -55,10 +62,12 @@
                 loading: true, // 是否在加载中
                 pagination: {}, // 分页信息
                 headers: [
+                    //默认排序,不排序sortable写为false
                     {text: 'id', align: 'center', value: 'id'},
                     {text: '名称', align: 'center', sortable: false, value: 'name'},
                     {text: 'LOGO', align: 'center', sortable: false, value: 'image'},
-                    {text: '首字母', align: 'center', value: 'letter', sortable: true,}
+                    {text: '首字母', align: 'center', value: 'letter'},
+                    {text: '操作', align: 'center', sortable: false}
                 ]
             }
         },
@@ -89,9 +98,40 @@
             },
             addBrand(){
                 this.dialog = true;
+                this.isEdit = false;
+                this.oldBrand = null;
             },
             closeWindow(){
                 this.dialog = false;
+            },
+            editBrand(oldBrand){
+
+                //在进行数据回显之前，先要，根据品牌id查询分类
+
+
+                this.$http.get("/item/category/of/brand?id="+oldBrand.id)
+                    .then(resp=>{
+
+                        //把查询到的分类的数组，赋值给oldBrand中的categories属性
+                        oldBrand.categories = resp.data;
+                        this.dialog = true;
+                        this.isEdit = true;
+                        this.oldBrand = oldBrand;
+                    }).catch(resp=>{
+                    this.$message.error("根据品牌查询分类失败")
+                })
+
+
+
+            },
+            deleteBrand(brandId){
+
+                this.$message.confirm("您确定要删除?勿以恶小而为之")
+                    .then(resp=>{
+                        this.$message.success("确定")
+                    }).catch(resp=>{
+                    this.$message.warning("取消")
+                })
             }
         },
         watch: { //监视器，判断某个属性或者对象的值是否发生变更，如果发生了变更将会自动的生效（调用handler）
