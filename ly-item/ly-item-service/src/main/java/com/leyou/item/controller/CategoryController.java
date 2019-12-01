@@ -28,4 +28,17 @@ public class CategoryController {
 
         return ResponseEntity.ok(this.categoryService.queryCategoryByParentId(pid));
     }
+
+
+    /**
+     * 根据品牌id查询对应的分类
+     * 用于数据回显
+     * @return
+     */
+    @GetMapping("of/brand")
+    public ResponseEntity<List<CategoryDTO>> queryCategoryByBrandId(@RequestParam("id")Long bid){
+
+        return ResponseEntity.ok(this.categoryService.queryCategoryByBrandId(bid));
+    }
+
 }

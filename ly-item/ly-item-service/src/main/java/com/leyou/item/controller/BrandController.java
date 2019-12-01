@@ -55,4 +55,14 @@ public class BrandController {
         this.brandService.addBrand(brandDTO,cids);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PutMapping
+    public ResponseEntity<Void> updateBrand(
+            BrandDTO brandDTO,
+            @RequestParam(value = "cids") List<Long> cids
+    ){
+        this.brandService.updateBrand(brandDTO,cids);
+
+        return ResponseEntity.ok().build();
+    }
 }

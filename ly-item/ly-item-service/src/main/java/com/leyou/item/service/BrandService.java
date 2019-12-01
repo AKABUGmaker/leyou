@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -86,6 +87,42 @@ public class BrandService {
         }
 
         //与分类和品牌中间表添加外键
+        count = this.brandMapper.insertCategoryBrand(cids,brand.getId());
+
+        if (count!=cids.size()){
+            throw new LyException(ExceptionEnum.BRAND_CATEGORY_SAVE_ERROR);
+        }
+    }
+
+    @Transactional
+    public void updateBrand(BrandDTO brandDTO, List<Long> cids) {
+
+
+        Brand brand = BeanHelper.copyProperties(brandDTO, Brand.class);
+
+        //Selective修改和新增方法中如果加入了Selective，表示在修改操作时，不会对所有的字段操作，只操作有值得字段
+        //int count = this.brandMapper.updateByPrimaryKeySelective(brand);
+
+        //先查询数据库，把会被误伤的字段，先查询，然后赋值
+        Brand oldBrand = this.brandMapper.selectByPrimaryKey(brandDTO.getId());
+
+        brand.setCreateTime(oldBrand.getCreateTime());
+        brand.setUpdateTime(new Date());
+
+        //这个是对所有的字段进行修改，有值的改，没有值得的置null
+        int count = this.brandMapper.updateByPrimaryKey(brand);
+
+        if (1!=count){
+            throw new LyException(ExceptionEnum.DATA_MODIFY_ERROR);
+        }
+
+        //根据品牌id清空对应的分类
+        count = this.brandMapper.deleteCategoryBrand(brand.getId());
+        //TODO 删除品牌时要先查询品牌对应的分类有多少个，删除后要进行校验
+
+
+        //重建品牌和分类之间的关系
+
         count = this.brandMapper.insertCategoryBrand(cids,brand.getId());
 
         if (count!=cids.size()){

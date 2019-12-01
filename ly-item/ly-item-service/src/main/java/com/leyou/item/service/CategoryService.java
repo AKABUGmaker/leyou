@@ -36,4 +36,15 @@ public class CategoryService {
 
         return categoryDTOS;
     }
+
+    public List<CategoryDTO> queryCategoryByBrandId(Long bid) {
+
+        List<Category> categories = this.categoryMapper.queryCategoryByBrandId(bid);
+
+        if (CollectionUtils.isEmpty(categories)){
+            throw new LyException(ExceptionEnum.CATEGORY_NOT_FOUND);
+        }
+
+        return BeanHelper.copyWithCollection(categories,CategoryDTO.class);
+    }
 }

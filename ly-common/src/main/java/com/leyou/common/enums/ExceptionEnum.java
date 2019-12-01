@@ -14,7 +14,9 @@ public enum ExceptionEnum {
     BRAND_SAVE_ERROR(500,"品牌保存错误"),
     BRAND_CATEGORY_SAVE_ERROR(500,"品牌和分类中间表保存错误"),
     INVALID_FILE_TYPE(400,"传入文件类型不匹配"),
-    FILE_UPLOAD_ERROR(500,"文件上传失败")
+    FILE_UPLOAD_ERROR(500,"文件上传失败"),
+    DATA_MODIFY_ERROR(500,"数据修改失败"),
+    DATA_NOT_FOUND(204,"所请求数据未找到"),
 
     ;
 

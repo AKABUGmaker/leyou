@@ -29,3 +29,6 @@ mybatis:
 logging:
   level:
     com.leyou: debug
+
+mapper:
+  wrap-keyword: "`{0}`"
