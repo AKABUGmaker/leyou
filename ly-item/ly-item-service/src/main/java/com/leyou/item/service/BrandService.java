@@ -129,4 +129,26 @@ public class BrandService {
             throw new LyException(ExceptionEnum.BRAND_CATEGORY_SAVE_ERROR);
         }
     }
+
+    public BrandDTO queryBrandByBrandIdInGoods(Long brandId) {
+
+        Brand brand = this.brandMapper.selectByPrimaryKey(brandId);
+
+        if (null == brand){
+            throw new LyException(ExceptionEnum.BRAND_NOT_FOUND);
+        }
+
+        return BeanHelper.copyProperties(brand,BrandDTO.class);
+    }
+
+    public List<BrandDTO> queryBrandByCategoryIdInGoods(Long cid) {
+
+       List<Brand> brands = this.brandMapper.queryBrandByCategoryIdInGoods(cid);
+
+       if (CollectionUtils.isEmpty(brands)){
+           throw new LyException(ExceptionEnum.BRAND_NOT_FOUND);
+       }
+
+       return BeanHelper.copyWithCollection(brands,BrandDTO.class);
+    }
 }

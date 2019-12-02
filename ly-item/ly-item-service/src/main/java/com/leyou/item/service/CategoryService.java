@@ -47,4 +47,16 @@ public class CategoryService {
 
         return BeanHelper.copyWithCollection(categories,CategoryDTO.class);
     }
+
+    public List<CategoryDTO> queryCategoryByCategoryIdsInGoods(List<Long> categoryIds) {
+
+        //通过sql中的in关键字将集合中的id一次性传进去
+     List<Category> categories =  this.categoryMapper.selectByIdList(categoryIds);
+
+     if (CollectionUtils.isEmpty(categories)){
+         throw new LyException(ExceptionEnum.CATEGORY_NOT_FOUND);
+     }
+
+     return BeanHelper.copyWithCollection(categories,CategoryDTO.class);
+    }
 }

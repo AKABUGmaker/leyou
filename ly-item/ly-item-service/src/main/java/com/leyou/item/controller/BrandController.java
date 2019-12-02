@@ -65,4 +65,12 @@ public class BrandController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("of/category")
+    public ResponseEntity<List<BrandDTO>> queryBrandByCategoryIdInGoods(@RequestParam("id")Long cid){
+
+        return ResponseEntity.ok(this.brandService.queryBrandByCategoryIdInGoods(cid));
+
+    }
+
 }
