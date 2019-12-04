@@ -6,10 +6,7 @@ import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
 import com.leyou.common.vo.PageResult;
-import com.leyou.item.dto.BrandDTO;
-import com.leyou.item.dto.CategoryDTO;
-import com.leyou.item.dto.SkuDTO;
-import com.leyou.item.dto.SpuDTO;
+import com.leyou.item.dto.*;
 import com.leyou.item.entily.Sku;
 import com.leyou.item.entily.Spu;
 import com.leyou.item.entily.SpuDetail;
@@ -24,7 +21,9 @@ import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
@@ -127,6 +126,100 @@ public class GoodsService {
         for (SkuDTO skuDTO : skuDTOs) {
             skuDTO.setSpuId(spu.getId());
             skus.add(BeanHelper.copyProperties(skuDTO,Sku.class));
+        }
+
+        count = this.skuMapper.insertList(skus);
+
+        if (count!=skus.size()){
+            throw new LyException(ExceptionEnum.DATA_SAVE_ERROR);
+        }
+    }
+
+    @Transactional
+    public void modifySaleable(Long spuId, Boolean saleable) {
+
+        Spu record = new Spu();
+        record.setId(spuId);
+        record.setSaleable(saleable);
+        record.setUpdateTime(new Date());
+        int count = this.spuMapper.updateByPrimaryKeySelective(record);
+
+        if (1!=count){
+            throw new LyException(ExceptionEnum.DATA_MODIFY_ERROR);
+        }
+
+        Sku skuRecord = new Sku();
+        skuRecord.setSpuId(spuId);
+        List<Sku> skus = this.skuMapper.select(skuRecord);
+
+        if (CollectionUtils.isEmpty(skus)){
+            throw new LyException(ExceptionEnum.DATA_NOT_FOUND);
+        }
+
+        AtomicInteger skuCount= new AtomicInteger();
+        skus.forEach(sku -> {
+            sku.setEnable(saleable);
+            sku.setUpdateTime(record.getUpdateTime());
+            int skuUpdateCount = this.skuMapper.updateByPrimaryKeySelective(sku);
+            skuCount.addAndGet(skuUpdateCount);
+        });
+
+        if (skus.size()!= skuCount.get()){
+            throw new LyException(ExceptionEnum.DATA_MODIFY_ERROR);
+        }
+
+
+    }
+
+    public SpuDetailDTO querySpuDetailBySpuId(Long spuId) {
+        SpuDetail spuDetail = this.spuDetailMapper.selectByPrimaryKey(spuId);
+        if (null == spuDetail){
+            throw new LyException(ExceptionEnum.DATA_NOT_FOUND);
+        }
+        return BeanHelper.copyProperties(spuDetail,SpuDetailDTO.class);
+    }
+
+    public List<SkuDTO> querySkuBySpuId(Long spuId) {
+        Sku record = new Sku();
+        record.setSpuId(spuId);
+
+        List<Sku> skus = this.skuMapper.select(record);
+
+        if (CollectionUtils.isEmpty(skus)){
+            throw new LyException(ExceptionEnum.DATA_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(skus,SkuDTO.class);
+    }
+
+    public void updateGoods(SpuDTO spuDTO) {
+
+        Spu spu = BeanHelper.copyProperties(spuDTO, Spu.class);
+        spu.setUpdateTime(new Date());
+
+        int count = this.spuMapper.updateByPrimaryKeySelective(spu);
+        if (1!=count){
+            throw new LyException(ExceptionEnum.DATA_MODIFY_ERROR);
+        }
+
+        count = this.spuDetailMapper.updateByPrimaryKeySelective(BeanHelper.copyProperties(spuDTO.getSpuDetail(), SpuDetail.class));
+        if (1!=count){
+            throw new LyException(ExceptionEnum.DATA_MODIFY_ERROR);
+        }
+
+        Sku sku = new Sku();
+        sku.setSpuId(spu.getId());
+
+        List<Sku> skus = this.skuMapper.select(sku);
+
+        skus.forEach(skuFor -> {
+            skuFor.setUpdateTime(new Date());
+            skuFor.setSpuId(spu.getId());
+        });
+
+        count = this.skuMapper.deleteByIdList(skus.stream().map(Sku::getId).collect(Collectors.toList()));
+
+        if (count!=skus.size()){
+            throw new LyException(ExceptionEnum.DATA_MODIFY_ERROR);
         }
 
         count = this.skuMapper.insertList(skus);
