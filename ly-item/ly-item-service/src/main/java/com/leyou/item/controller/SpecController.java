@@ -39,9 +39,10 @@ public class SpecController {
     @GetMapping("params")
     public ResponseEntity<List<SpecParamDTO>> querySpecParams(
             @RequestParam(value = "gid",required = false)Long gid,
-            @RequestParam(value = "cid",required = false)Long cid){
+            @RequestParam(value = "cid",required = false)Long cid,
+            @RequestParam(value = "searching",required = false)Boolean searching){
 
-        return ResponseEntity.ok(this.specService.querySpecParams(gid,cid));
+        return ResponseEntity.ok(this.specService.querySpecParams(gid,cid,searching));
     }
 
 

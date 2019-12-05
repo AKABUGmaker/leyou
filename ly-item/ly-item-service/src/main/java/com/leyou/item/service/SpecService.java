@@ -47,11 +47,12 @@ public class SpecService {
      * @param gid
      * @return
      */
-    public List<SpecParamDTO> querySpecParams(Long gid,Long cid) {
+    public List<SpecParamDTO> querySpecParams(Long gid,Long cid,Boolean searching) {
 
         SpecParam record = new SpecParam();
         record.setGroupId(gid);
         record.setCid(cid);
+        record.setSearching(searching);
 
         List<SpecParam> specParams = this.specParamMapper.select(record);
 
