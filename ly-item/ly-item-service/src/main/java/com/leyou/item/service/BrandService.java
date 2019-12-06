@@ -151,4 +151,13 @@ public class BrandService {
 
        return BeanHelper.copyWithCollection(brands,BrandDTO.class);
     }
+
+    public List<BrandDTO> queryBrandByIds(List<Long> ids) {
+        List<Brand> brands = this.brandMapper.selectByIdList(ids);
+
+        if (CollectionUtils.isEmpty(brands)){
+            throw new LyException(ExceptionEnum.DATA_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(brands,BrandDTO.class);
+    }
 }

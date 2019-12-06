@@ -9,7 +9,7 @@ spring:
   data:
     elasticsearch:
       cluster-name: elasticsearch
-      cluster-nodes: 192.168.133.129:9300
+      cluster-nodes: 192.168.133.130:9300
 eureka:
   client:
     service-url:
