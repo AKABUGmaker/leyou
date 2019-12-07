@@ -112,7 +112,7 @@
 					<li>
 						<a href="#">Apple</a>
 					</li>
-					<li class="active">Apple iPhone 6s</li>
+					<li class="active" v-text="spu.name">Apple iPhone 6s</li>
 				</ul>
 			</div>
 			<!--product-info-->
@@ -671,10 +671,15 @@
 <script src="/js/axios.min.js"></script>
 <script src="/js/common.js"></script>
 
+<script th:inline="javascript">
+	let spu = /*[[${spu}]]*/ {};
+</script>
+
 <script>
     var itemVm = new Vue({
         el:"#itemApp",
         data:{
+        	spu
         },
         components:{
             lyTop: () => import('/js/pages/top.js')

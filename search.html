@@ -111,13 +111,9 @@
                 </ul>
                 <!--已选择过滤项-->
                 <ul class="tags-choose">
-                    <li class="tag">
-                        品牌:<span style="color: red">apple</span>
-                        <i class="sui-icon icon-tb-close"></i>
-                    </li>
-                    <li class="tag">
-                        内存:<span style="color: red">4G</span>
-                        <i class="sui-icon icon-tb-close"></i>
+                    <li class="tag" v-for="value,key,index in search.filter" :key="index">
+                        {{key}}:<span style="color: red" v-text="value">value</span>
+                        <i class="sui-icon icon-tb-close" @click="removeFilter(key)"></i>
                     </li>
                 </ul>
                 <div class="clearfix"></div>
@@ -131,7 +127,7 @@
                     <div class="fl value">
                         <ul class="type-list">
                             <!--                            v-for="option in options" 表示循环展示value中的每一项值-->
-                            <li v-for="option,i in options" :key="i">
+                            <li v-for="option,i in options" :key="i" @click="selectFilter(key,option.id||option)">
                                 <a v-text="option.name || option">手机</a>
                             </li>
 
@@ -145,10 +141,10 @@
                     <div class="value logos">
                         <ul class="logo-list">
                             <!--                            循环展示每个品牌图片时，要考虑是否图片有内容，如果有，则展示，没有则展示品牌的名称-->
-                            <li v-for="option,j in options" :key="j" v-if="option.image">
+                            <li v-for="option,j in options" :key="j" v-if="option.image" @click="selectFilter(key,option.id)">
                                 <img :src="option.image"/>
                             </li>
-                            <li style="text-align: center" v-else>
+                            <li style="text-align: center" v-else @click="selectFilter(key,option.id)">
                                 <a style="line-height: 30px; font-size: 12px" href="#" v-text="option.name">黑马</a>
                             </li>
                         </ul>
@@ -204,7 +200,7 @@
                             <div class="list-wrap">
                                 <div class="p-img">
                                     <!--                                    展示选中商品的大图-->
-                                    <a href="item.html" target="_blank">
+                                    <a :href="'item/'+goods.id+'.html'" target="_blank">
                                         <img :src="goods.selected.image" height="200"/>
                                     </a>
                                     <ul class="skus">
@@ -359,7 +355,8 @@
             ly,
             search: {
                 key: "",
-                page: 0
+                page: 0,
+                filter:{}
             },
             goodsList:[],
             total:0,
@@ -378,6 +375,7 @@
             // 保存key
             hash.key = key;
             hash.page = hash.page ? parseInt(hash.page) : 1;
+            hash.filter = hash.filter || {};
             this.search = hash;
             // 加载
             this.loadFilterList();//加载过滤条件
@@ -431,6 +429,14 @@
                     }).catch(resp=>{
                     console.log("filter请求失败")
                 })
+            },
+            selectFilter(key,value){
+                Vue.set(this.search.filter,key,value);
+            },
+            removeFilter(key){
+                const {...obj} = this.search.filter;
+                delete obj[key];
+                this.search.filter=obj;
             }
         },
         watch:{
@@ -442,6 +448,20 @@
                     window.location.hash = "#" + ly.stringify(obj);
                     // 因为hash变化不引起刷新，需要手动调用loadData
                     this.loadData();
+                }
+            },
+            "search.filter":{
+                deep:true,
+                handler() {
+
+                    // 把search对象中除了key以外的属性记录在obj对象中（解构表达式），
+                    const {key, ...obj} = this.search;
+                    // 把obj属性拼接在url路径的hash中
+                    window.location.hash = "#" + ly.stringify(obj);
+                    this.loadFilterList();
+                    // 因为hash变化不引起刷新，需要手动调用loadData
+                    this.loadData();
+
                 }
             }
         },
