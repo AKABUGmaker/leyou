@@ -228,4 +228,12 @@ public class GoodsService {
             throw new LyException(ExceptionEnum.DATA_SAVE_ERROR);
         }
     }
+
+    public SpuDTO querySpuById(Long spuId) {
+        Spu spu = this.spuMapper.selectByPrimaryKey(spuId);
+        if (null==spu){
+            throw new LyException(ExceptionEnum.DATA_NOT_FOUND);
+        }
+        return BeanHelper.copyProperties(spu,SpuDTO.class);
+    }
 }

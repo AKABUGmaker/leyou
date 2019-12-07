@@ -2,7 +2,7 @@ package com.leyou.search.service;
 
 import com.leyou.common.vo.PageResult;
 import com.leyou.item.dto.SpuDTO;
-import com.leyou.search.clients.ItemClient;
+import com.leyou.item.clients.ItemClient;
 import com.leyou.search.pojo.Goods;
 import com.leyou.search.reponsitory.GoodsRepository;
 import org.junit.Test;
@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 

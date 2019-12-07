@@ -1,10 +1,11 @@
-package com.leyou.search.clients;
+package com.leyou.item.clients;
 
 import com.leyou.common.vo.PageResult;
 import com.leyou.item.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -61,4 +62,7 @@ public interface ItemClient {
     @GetMapping("brand/list")
     List<BrandDTO> queryBrandByIds(@RequestParam("ids") List<Long> ids);
 
+
+    @GetMapping("spu/{id}")
+    SpuDTO querySpuById(@PathVariable("id")Long spuId);
 }

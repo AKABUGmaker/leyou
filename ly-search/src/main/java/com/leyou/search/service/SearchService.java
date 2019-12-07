@@ -5,16 +5,19 @@ import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.BeanHelper;
 import com.leyou.common.vo.PageResult;
 import com.leyou.item.dto.SpecParamDTO;
-import com.leyou.search.clients.ItemClient;
+import com.leyou.item.clients.ItemClient;
 import com.leyou.search.dto.GoodsDTO;
 import com.leyou.search.dto.SearchRequest;
 import com.leyou.search.pojo.Goods;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -54,6 +57,8 @@ public class SearchService {
         //执行查询
 
         AggregatedPage<Goods> goodsAggregatedPage = this.esTemplate.queryForPage(queryBuilder.build(), Goods.class);
+
+
 
 
         //把查询返回的分页结果，进行封装，三个参数
@@ -152,15 +157,56 @@ public class SearchService {
         //执行查询聚合
         AggregatedPage<Goods> goodsAggregatedPage = this.esTemplate.queryForPage(queryBuilder.build(), Goods.class);
 
+        //解析聚合,获取所有的聚合
+        Aggregations aggregations = goodsAggregatedPage.getAggregations();
+
+        //循环解析聚合,聚合名称是可搜索参数名称
+        specParamDTOS.forEach(specParamDTO -> {
+            String name = specParamDTO.getName();
+
+            StringTerms stringTerms = aggregations.get(name);
+
+            List<String> values = stringTerms.getBuckets()
+                    .stream()
+                    .map(StringTerms.Bucket::getKeyAsString)
+                    .collect(Collectors.toList());
+
+            result.put(name,values);
+        });
+
     }
 
+    //构建查询条件
     private QueryBuilder buildBasicQuery(SearchRequest searchRequest) {
+
+        BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
+
         String key = searchRequest.getKey();
 
         if (StringUtils.isBlank(key)) {
             throw new LyException(ExceptionEnum.INVALID_REQUEST_PARAM);
         }
 
-        return QueryBuilders.matchQuery("all", key);
+        //添加查询条件
+        queryBuilder.must(QueryBuilders.matchQuery("all",key).operator(Operator.AND));
+
+        //添加过滤条件
+        searchRequest.getFilter().entrySet().forEach(entry -> {
+            String key1 = entry.getKey();
+            String value = entry.getValue();
+
+            if ("品牌".equals(key1)){
+                key1 = "brandId";
+            }else if("分类".equals(key1)){
+                key1 = "categoryId";
+            }else {
+                key1 = "specs."+key1+".keyword";
+            }
+
+            queryBuilder.filter(QueryBuilders.termQuery(key1,value));
+        });
+
+
+        return queryBuilder;
     }
 }

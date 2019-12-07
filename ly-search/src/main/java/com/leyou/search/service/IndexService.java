@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.leyou.common.utils.BeanHelper;
 import com.leyou.common.utils.JsonUtils;
 import com.leyou.item.dto.*;
-import com.leyou.search.clients.ItemClient;
+import com.leyou.item.clients.ItemClient;
 import com.leyou.search.pojo.Goods;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

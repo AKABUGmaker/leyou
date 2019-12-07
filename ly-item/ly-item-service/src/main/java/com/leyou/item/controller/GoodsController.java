@@ -85,4 +85,8 @@ public class GoodsController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("spu/{id}")
+    public ResponseEntity<SpuDTO> querySpuById(@PathVariable("id")Long spuId){
+        return ResponseEntity.ok(this.goodsService.querySpuById(spuId));
+    }
 }
