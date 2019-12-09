@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -61,5 +63,24 @@ public class SpecService {
         }
 
         return BeanHelper.copyWithCollection(specParams,SpecParamDTO.class);
+    }
+
+    public List<SpecGroupDTO> querySpecByCid(Long cid){
+        //查询规格组
+        List<SpecGroupDTO> groupList = querySpecGroupByCategoryId(cid);
+
+        //查询分类下所有规格参数
+        //通过groupingBy对规格参数进行分组
+        List<SpecParamDTO> params = querySpecParams(null, cid, null);
+
+        //将规格参数按照groupId进行分组，得到每个group下的param的集合
+        Map<Long,List<SpecParamDTO>> paramMap = params.stream()
+                .collect(Collectors.groupingBy(SpecParamDTO::getGroupId));
+
+        //将其填写到group中
+        for (SpecGroupDTO groupDTO : groupList){
+            groupDTO.setParams(paramMap.get(groupDTO.getId()));
+        }
+        return groupList;
     }
 }

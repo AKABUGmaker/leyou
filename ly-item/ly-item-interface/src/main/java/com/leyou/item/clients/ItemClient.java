@@ -65,4 +65,21 @@ public interface ItemClient {
 
     @GetMapping("spu/{id}")
     SpuDTO querySpuById(@PathVariable("id")Long spuId);
+
+    /**
+     * 根据brandId查询对应的品牌信息
+     *
+     * @param brandId
+     * @return
+     */
+    @GetMapping("brand/{id}")
+    BrandDTO queryBrandById(@PathVariable("id") Long brandId);
+
+    /**
+     * 根据分类同时查询规格参数组以及组内参数
+     * @param cid
+     * @return
+     */
+    @GetMapping("spec/of/category")
+    List<SpecGroupDTO> querySpecsByCid(@RequestParam("cid")Long cid);
 }

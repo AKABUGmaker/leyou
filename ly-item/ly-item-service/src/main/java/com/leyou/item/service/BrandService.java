@@ -160,4 +160,14 @@ public class BrandService {
         }
         return BeanHelper.copyWithCollection(brands,BrandDTO.class);
     }
+
+    public BrandDTO queryBrandById(Long brandId) {
+        Brand brand = this.brandMapper.selectByPrimaryKey(brandId);
+
+        if (null==brand){
+            throw new LyException(ExceptionEnum.BRAND_NOT_FOUND);
+        }
+
+        return BeanHelper.copyProperties(brand,BrandDTO.class);
+    }
 }

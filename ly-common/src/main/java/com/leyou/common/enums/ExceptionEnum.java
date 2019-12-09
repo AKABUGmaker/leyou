@@ -18,8 +18,9 @@ public enum ExceptionEnum {
     DATA_MODIFY_ERROR(500,"数据修改失败"),
     DATA_NOT_FOUND(204,"所请求数据未找到"),
     DATA_SAVE_ERROR(500,"数据保存失败"),
-    INVALID_REQUEST_PARAM(400,"前台提供的请求参数不符合要求")
-
+    INVALID_REQUEST_PARAM(400,"前台提供的请求参数不符合要求"),
+    DIRECTORY_WRITER_ERROR(500,"文件目录创建失败"),
+    FILE_WRITER_ERROR(500,"文件输出异常")
     ;
 
     private int status;

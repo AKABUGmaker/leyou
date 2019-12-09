@@ -46,6 +46,15 @@ public class SpecController {
     }
 
 
+    /**
+     * 根据分类同时查询规格参数组以及组内参数
+     * @param cid
+     * @return
+     */
+    @GetMapping("of/category")
+    public ResponseEntity<List<SpecGroupDTO>> querySpecByCid(@RequestParam("cid")Long cid){
+        return ResponseEntity.ok(this.specService.querySpecByCid(cid));
+    }
 
 
 }
