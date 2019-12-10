@@ -14,6 +14,7 @@ import com.leyou.item.mapper.SkuMapper;
 import com.leyou.item.mapper.SpuDetailMapper;
 import com.leyou.item.mapper.SpuMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.leyou.common.constants.MQConstants.Exchange.ITEM_EXCHANGE_NAME;
+import static com.leyou.common.constants.MQConstants.RoutingKey.ITEM_DOWN_KEY;
+import static com.leyou.common.constants.MQConstants.RoutingKey.ITEM_UP_KEY;
+
 
 @Service
 public class GoodsService {
@@ -35,6 +40,9 @@ public class GoodsService {
 
     @Autowired
     private SkuMapper skuMapper;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
 
     @Autowired
     private SpuDetailMapper spuDetailMapper;
@@ -169,6 +177,12 @@ public class GoodsService {
         }
 
 
+        //TODO 下架时，删除，上架时，创建
+
+        // 发送mq消息
+        String key = saleable ? ITEM_UP_KEY : ITEM_DOWN_KEY;
+        amqpTemplate.convertAndSend(ITEM_EXCHANGE_NAME, key, spuId);
+
     }
 
     public SpuDetailDTO querySpuDetailBySpuId(Long spuId) {
@@ -227,6 +241,8 @@ public class GoodsService {
         if (count!=skus.size()){
             throw new LyException(ExceptionEnum.DATA_SAVE_ERROR);
         }
+
+
     }
 
     public SpuDTO querySpuById(Long spuId) {

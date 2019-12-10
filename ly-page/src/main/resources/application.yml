@@ -7,6 +7,12 @@ spring:
   thymeleaf:
     cache: false
 
+  rabbitmq:
+    host: 192.168.133.130
+    username: heima86
+    password: heima86
+    virtual-host: /heihei
+
 eureka:
   client:
     service-url:

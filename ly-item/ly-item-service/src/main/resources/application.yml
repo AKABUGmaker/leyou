@@ -12,6 +12,19 @@ spring:
   jackson:
     default-property-inclusion: non_null #包含到返回消息中的属性一定要有值，如果没有值，则取消返回
 
+  rabbitmq:
+    host: 192.168.133.130
+    username: heima86
+    password: heima86
+    virtual-host: /heihei
+    template:
+      retry:
+        enabled: true
+        initial-interval: 10000ms
+        max-interval: 80000ms
+        multiplier: 2
+      publisher-confirms: true #生产确认机制
+
 eureka:
   client:
     service-url:
