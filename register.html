@@ -96,8 +96,9 @@
                 <div class="control-group">
                     <label class="control-label"></label>
                     <div class="controls btn-reg">
+                        <!--                        @click.prevent表示点击事件发生时阻止组件的默认事件发生-->
                         <a class="sui-btn btn-block btn-xlarge btn-danger" href="javascript:void(0)" target="_blank"
-                           @click.stop="submit"
+                           @click.prevent="submit"
                         >完成注册</a>
                     </div>
                 </div>
