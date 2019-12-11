@@ -1,0 +1,59 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: user-service
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/leyou
+    username: root
+    password: root
+
+  jackson:
+    default-property-inclusion: non_null #包含到返回消息中的属性一定要有值，如果没有值，则取消返回
+
+  rabbitmq:
+    host: 192.168.133.130
+    username: heima86
+    password: heima86
+    virtual-host: /heihei
+    template:
+      retry:
+        enabled: true
+        initial-interval: 10000ms
+        max-interval: 80000ms
+        multiplier: 2
+    publisher-confirms: true #生产确认机制
+  redis:
+    host: 192.168.172.129
+
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    lease-renewal-interval-in-seconds: 5 #修改心跳为5s
+    lease-expiration-duration-in-seconds: 15 #修改过期时间
+
+logging:
+  level:
+    com.leyou: debug
+
+mybatis:
+  mapper-locations: mappers/**/*.xml
+  type-aliases-package: com.leyou.user.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+mapper:
+  wrap-keyword: "`{0}`"
+
+ly:
+  encoder:
+    crypt:
+      secret: ${random.uuid} # 随机的密钥，使用uuid
+      strength: 10 # 加密强度4~31，决定了密码和盐加密时的运算次数，超过10以后加密耗时会显著增加

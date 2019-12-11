@@ -21,7 +21,12 @@ public enum ExceptionEnum {
     INVALID_REQUEST_PARAM(400,"前台提供的请求参数不符合要求"),
     DIRECTORY_WRITER_ERROR(500,"文件目录创建失败"),
     FILE_WRITER_ERROR(500,"文件输出异常"),
-    SEND_MESSAGE_ERROR(500,"服务端短信发送异常")
+    SEND_MESSAGE_ERROR(500,"服务端短信发送异常"),
+    DATA_SERVER_NO_SEE(500,"数据库服务不可见"),
+    QUERY_FAIL(500,"查询失败"),
+
+
+
     ;
 
     private int status;
