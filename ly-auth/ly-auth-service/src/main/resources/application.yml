@@ -12,3 +12,8 @@ eureka:
     prefer-ip-address: true
     lease-renewal-interval-in-seconds: 5 #心跳周期
     lease-expiration-duration-in-seconds: 15 #过期时间
+
+ly:
+  jwt:
+    pubKeyPath: D:/heima/rsa/id_rsa.pub # 公钥地址
+    priKeyPath: D:/heima/rsa/id_rsa # 私钥地址

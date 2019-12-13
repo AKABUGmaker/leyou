@@ -25,6 +25,8 @@ zuul:
     user-service: /user/**
     auth-service: /auth/**
 
+  sensitive-headers: #关闭所有的敏感词过滤
+
 hystrix:
   command:
     default:
