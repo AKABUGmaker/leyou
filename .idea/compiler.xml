@@ -17,6 +17,7 @@
         <module name="ly-upload" />
         <module name="ly-search" />
         <module name="ly-user-pojo" />
+        <module name="ly-auth-interface" />
         <module name="ly-item-service" />
         <module name="ly-sms" />
         <module name="ly-item-pojo" />
@@ -26,6 +27,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="leyou" options="-parameters" />
+      <module name="ly-auth-interface" options="-parameters" />
       <module name="ly-auth-service" options="-parameters" />
       <module name="ly-common" options="-parameters" />
       <module name="ly-gateway" options="-parameters" />

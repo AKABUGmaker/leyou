@@ -25,6 +25,24 @@ public class JwtProperties implements InitializingBean {
     private PublicKey publicKey;
     private PrivateKey privateKey;
 
+    //非普通所以一定要手动初始化地址
+    private UserTokenInfo user = new UserTokenInfo();
+
+    @Data
+    public class UserTokenInfo{
+        private String cookieName;
+        private Integer expire;
+        private String cookieDomain;
+        private Integer cookieMaxAge;
+    }
+
+    private AppTokenInfo app = new AppTokenInfo();
+
+    @Data
+    public class AppTokenInfo{
+        private Integer expire;
+    }
+
     //等待其他属性注入完成后，再进行方法执行，
     @Override
     public void afterPropertiesSet() throws Exception {
