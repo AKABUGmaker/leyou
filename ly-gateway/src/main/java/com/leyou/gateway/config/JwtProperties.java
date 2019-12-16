@@ -1,4 +1,4 @@
-package com.leyou.auth.config;
+package com.leyou.gateway.config;
 
 import com.leyou.common.auth.utils.RsaUtils;
 import lombok.Data;
@@ -17,13 +17,8 @@ public class JwtProperties implements InitializingBean {
      * 公钥地址
      */
     private String pubKeyPath;
-    /**
-     * 私钥地址
-     */
-    private String priKeyPath;
 
     private PublicKey publicKey;
-    private PrivateKey privateKey;
 
     //非普通所以一定要手动初始化地址
     private UserTokenInfo user = new UserTokenInfo();
@@ -31,9 +26,6 @@ public class JwtProperties implements InitializingBean {
     @Data
     public class UserTokenInfo{
         private String cookieName;
-        private Integer expire;
-        private String cookieDomain;
-        private Integer cookieMaxAge;
     }
 
     private AppTokenInfo app = new AppTokenInfo();
@@ -42,7 +34,6 @@ public class JwtProperties implements InitializingBean {
     public class AppTokenInfo{
         private Long id;
         private String secret;
-        private Integer expire;
         private String headerName;
     }
 
@@ -50,11 +41,11 @@ public class JwtProperties implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
-            // 获取公钥和私钥
+            // 获取公钥
             this.publicKey = RsaUtils.getPublicKey(pubKeyPath);
-            this.privateKey = RsaUtils.getPrivateKey(priKeyPath);
+            log.info("【网关】初始化公钥成功！");
         } catch (Exception e) {
-            log.error("初始化公钥和私钥失败！", e);
+            log.error("【网关】初始化公钥失败！", e);
             throw new RuntimeException(e);
         }
     }

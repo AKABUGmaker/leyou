@@ -252,4 +252,14 @@ public class GoodsService {
         }
         return BeanHelper.copyProperties(spu,SpuDTO.class);
     }
+
+    public List<SkuDTO> querySkuByIds(List<Long> ids) {
+
+        List<Sku> skuList = this.skuMapper.selectByIdList(ids);
+
+        if (CollectionUtils.isEmpty(skuList)){
+            throw new LyException(ExceptionEnum.DATA_NOT_FOUND);
+        }
+        return BeanHelper.copyWithCollection(skuList,SkuDTO.class);
+    }
 }

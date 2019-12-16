@@ -45,6 +45,9 @@ ly:
       cookieMaxAge: 1800
     app:
       expire: 1500 #服务token的有效期25H
+      id: 10
+      secret: auth-service
+      headerName: heima86
 
   encoder:
     crypt:

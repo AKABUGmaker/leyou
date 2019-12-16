@@ -1,7 +1,7 @@
-package com.leyou.gateway.task;
+package com.leyou.auth.task;
 
-import com.leyou.auth.clients.AuthClient;
-import com.leyou.gateway.config.JwtProperties;
+import com.leyou.auth.config.JwtProperties;
+import com.leyou.auth.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,25 +14,27 @@ import org.springframework.stereotype.Component;
 public class PrivilegeTokenHolder {
 
     @Autowired
-    private JwtProperties jwtProperties;
+    private JwtProperties props;
 
     @Autowired
-    private AuthClient authClient;
+    private AuthService authService;
+
+
+    final long refreshTime = 86400000L;  //24刷新，第一次执行在启动时执行
 
     private String token;
 
-    final long refreshTime = 86400000L;//24小时,启动时执行第一次
-    //时间需要写常量
+    //时间需要写常量，并且一定不能写对象类型
     @Scheduled(fixedDelay = refreshTime)
     public void getTokenInTime() {
 
         while (true) {
             try {
-                this.token =  authClient.authorize(jwtProperties.getApp().getId(), jwtProperties.getApp().getSecret());
-                log.info("【网关】获取token成功");
+                this.token =  this.authService.authenticate(props.getApp().getId(), props.getApp().getSecret());
+                log.info("【授权中心】获取token成功");
                 break;
             } catch (Exception e) {
-                log.error("【网关】获取token失败");
+                log.error("【授权中心】获取token失败");
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException ex) {
