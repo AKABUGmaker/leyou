@@ -308,14 +308,18 @@
       },
       loadSku(carts) {
         return new Promise((resolve, reject) => {
+          //carts.map表示要迭代对每个元素做运算,ids就是carts数组中每个sku对象的id的数组
           const ids = carts.map(c => {
-            c.saleable = false;
+            c.saleable = false; //假设所有的元素都下架
             return c.skuId;
           });
+          //以购物车中所有的商品 的id发起web请求，查询其最新状态
           ly.http.get("/item/sku/list?ids=" + ids.join(",")).then(({data: skus}) => {
             carts.forEach(c => {
+              //skus表示根据查询条件返回后的sku数组
+              //skus.find表示当前sku在carts中的对应对象
               const sku = skus.find(s => s.id === c.skuId);
-              if (sku) {
+              if (sku) {//查到后，重新赋值
                 c.newPrice = sku.price;
                 c.stock = sku.stock;
                 c.spuId = sku.spuId;
@@ -324,9 +328,9 @@
                 c.enable = false;
               }
             });
-            resolve();
+            resolve();//Promise内部执行resolve对应的外部就执行then
           }).catch(() => {
-            reject();
+            reject();//Promise内部执行reject对应的外部就执行catch
           })
         })
       },
@@ -354,7 +358,9 @@
         }).catch(() => {
           // 未登录
           console.log("未登录")
+          //从本地localStorage中取出所有购物车数据
           const carts = ly.store.get("carts");
+          //加载筛选（去后台查询，要得到用户购物车最新的数据）
           this.loadSku(carts).then(() => {
             this.carts = carts;
             this.refreshSelectedCarts();
