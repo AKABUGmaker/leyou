@@ -39,7 +39,6 @@ public class PrivilegeTokenInterceptor implements HandlerInterceptor {
             }
         } catch (Exception e) {
             log.error("【用户服务】拒绝非法请求");
-        }finally {
             response.setStatus(401);//未授权
         }
         return false;

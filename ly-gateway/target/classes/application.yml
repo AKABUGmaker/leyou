@@ -24,6 +24,7 @@ zuul:
     search-service: /search/**
     user-service: /user/**
     auth-service: /auth/**
+    cart-service: /cart/**
 
   sensitive-headers: #关闭所有的敏感词过滤
 

@@ -25,6 +25,7 @@ public enum ExceptionEnum {
     DATA_SERVER_NO_SEE(500,"数据库服务不可见"),
     QUERY_FAIL(500,"查询失败"),
     TOKEN_GENERATE_ERROR(500,"token生成失败"),
+    CART_IS_NULL(500,"服务端数据查询为空")
 
 
 
