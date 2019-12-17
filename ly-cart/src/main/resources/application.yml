@@ -25,3 +25,9 @@ eureka:
 logging:
   level:
     com.leyou: debug
+
+ly:
+  jwt:
+    pubKeyPath: D:/heima/rsa/id_rsa.pub # 公钥地址
+    user:
+      cookieName: LY_TOKEN #cookie名称

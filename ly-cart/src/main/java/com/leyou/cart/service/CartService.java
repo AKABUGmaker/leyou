@@ -2,9 +2,12 @@ package com.leyou.cart.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.leyou.cart.entity.Cart;
+import com.leyou.cart.interceptors.UserTokenInterceptor;
+import com.leyou.common.auth.entity.UserInfo;
 import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exceptions.LyException;
 import com.leyou.common.utils.JsonUtils;
+import com.sun.org.apache.bcel.internal.generic.I2F;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
@@ -21,12 +24,15 @@ public class CartService {
     @Autowired
     private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private UserTokenInterceptor interceptor;
+
     public void addCart(Cart cart) {
         BoundHashOperations<String, String, String> ops = null;
 
         try {
             //根据用户的id过去当前用户的redis,map的操作对象
-            ops = redisTemplate.boundHashOps("userId");
+            ops = redisTemplate.boundHashOps(this.getKey());
         } catch (Exception e) {
             log.error("redis访问出错");
         }
@@ -57,14 +63,14 @@ public class CartService {
 
     public List<Cart> listCarts() {
 
-        if (redisTemplate.hasKey("userId")){
+        if (redisTemplate.hasKey(this.getKey())){
             //如果用户有购物车数据信息，则查询展示
 
             BoundHashOperations<String, String, String> ops = null;
 
             try {
                 //根据用户的id过去当前用户的redis,map的操作对象
-                ops = redisTemplate.boundHashOps("userId");
+                ops = redisTemplate.boundHashOps(this.getKey());
             } catch (Exception e) {
                 log.error("redis访问出错");
             }
@@ -84,5 +90,43 @@ public class CartService {
         }
 
 
+    }
+
+    /**
+     * 将未登录购物车商品与登陆后合并
+     * @param carts
+     */
+    public void patchAddCarts(List<Cart> carts) {
+
+        carts.forEach(cart -> addCart(cart));
+    }
+
+    public void modifyCartNum(Long skuId, Integer num) {
+        //首先判断购物车中有没有数据（以防用户在别的页面去除数据等原因）
+
+        if (!redisTemplate.hasKey(this.getKey())){
+            throw new LyException(ExceptionEnum.CART_IS_NULL);
+        }
+        BoundHashOperations<String, String, String> ops = redisTemplate.boundHashOps(this.getKey());
+        String hKey = String.valueOf(skuId);
+        //在判断当前购物车有没有指定的该商品
+        if (!ops.hasKey(hKey)){
+            throw new LyException(ExceptionEnum.CART_IS_NULL);
+        }
+
+        Cart cart = JsonUtils.nativeRead(ops.get(hKey), new TypeReference<Cart>() {
+        });
+
+        cart.setNum(num);
+
+        ops.put(hKey,JsonUtils.toString(cart));
+    }
+
+    private String getKey(){
+        UserInfo userInfo = interceptor.getUserInfo();
+
+        String key = String.valueOf(userInfo.getId());
+
+        return key;
     }
 }
