@@ -25,6 +25,10 @@ zuul:
     user-service: /user/**
     auth-service: /auth/**
     cart-service: /cart/**
+    order-service:
+      path: /order/**
+      serviceId: order-service #服务id名称
+      strip-prefix: false #不消耗路径
 
   sensitive-headers: #关闭所有的敏感词过滤
 

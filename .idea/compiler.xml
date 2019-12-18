@@ -12,6 +12,7 @@
         <module name="ly-user-service" />
         <module name="ly-gateway" />
         <module name="ly-page" />
+        <module name="ly-order" />
         <module name="ly-item-interface" />
         <module name="ly-user-interface" />
         <module name="ly-common" />
@@ -36,6 +37,7 @@
       <module name="ly-item-interface" options="-parameters" />
       <module name="ly-item-pojo" options="-parameters" />
       <module name="ly-item-service" options="-parameters" />
+      <module name="ly-order" options="-parameters" />
       <module name="ly-page" options="-parameters" />
       <module name="ly-registry" options="-parameters" />
       <module name="ly-search" options="-parameters" />

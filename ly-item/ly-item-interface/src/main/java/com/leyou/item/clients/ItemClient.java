@@ -82,4 +82,12 @@ public interface ItemClient {
      */
     @GetMapping("spec/of/category")
     List<SpecGroupDTO> querySpecsByCid(@RequestParam("cid")Long cid);
+
+    /**
+     * 根据skuId查询对应的sku集合
+     * @param ids
+     * @return
+     */
+    @GetMapping("/sku/list")
+    List<SkuDTO> querySkuByIds(@RequestParam("ids")List<Long> ids);
 }
