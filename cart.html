@@ -338,7 +338,7 @@
         // 查询购物车
         this.isLogin().then(() => {
           // 判断本地未登录购物车是否存在，
-          /*const carts = ly.store.get("carts") || [];
+          const carts = ly.store.get("carts") || [];
           if (carts.length > 0) {
             // 如果存在，发到后台，添加到redis，删除本地购物车
             ly.http.post("/cart/list", carts).then(() => {
@@ -352,7 +352,7 @@
           } else {
             // 查询购物车
             this.handleLoginCarts();
-          }*/
+          }
 		  // 查询购物车
 		  this.handleLoginCarts();
         }).catch(() => {
@@ -362,15 +362,15 @@
           const carts = ly.store.get("carts");
           //加载筛选（去后台查询，要得到用户购物车最新的数据）
           this.loadSku(carts).then(() => {
-            this.carts = carts;
+            this.carts = carts;//把查询后的sku信息，赋值给vue本地的carts
             this.refreshSelectedCarts();
           });
         })
       },
       handleLoginCarts() {
-        // 已登录
+        // 已登录,redis的作用和localStorage完全一致，只需要提供对应的sku信息即可
         ly.http.get("/cart/list").then(resp => {
-          this.loadSku(resp.data).then(() => {
+          this.loadSku(resp.data).then(() => {//loadSku负责上架和下架的筛选展示
             this.carts = resp.data;
             this.refreshSelectedCarts();
           });
