@@ -11,11 +11,11 @@ spring:
 
 ly:
   sms:
-    accessKeyID: LTAI4FmvincMrabnuMKPhcx4 # 你自己的accessKeyId
-    accessKeySecret: XnFpQvYY0waj2XBhE59NnMsKheBCQd # 你自己的AccessKeySecret
-    signName: 传智健康体验预约 # 签名名称
-    verifyCodeTemplate: SMS_177255936 # 模板名称
-    domain: dysmsapi.aliyuncs.com # 域名
+    accessKeyID:*********4 # 你自己的accessKeyId
+    accessKeySecret: **************** # 你自己的AccessKeySecret
+    signName: ******** # 签名名称
+    verifyCodeTemplate: ********* # 模板名称
+    domain: ************ # 域名
     action: SendSMS # API类型，发送短信
     version: 2017-05-25 # API版本，固定值
     regionID: cn-hangzhou # 区域id
